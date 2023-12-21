@@ -5,14 +5,14 @@ from aiogram import Dispatcher, Bot
 
 from settings import BOT_TOKEN
 from storage.models import create_db_tables
-from handlers import common_cmd, create_task, inline_mode
+from handlers import common_cmd, create_task, manage_tasks
 
 # Логирование
 logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
-dp.include_routers(common_cmd.router, create_task.router, inline_mode.router)
+dp.include_routers(common_cmd.router, manage_tasks.router, create_task.router)
 
 
 async def main():

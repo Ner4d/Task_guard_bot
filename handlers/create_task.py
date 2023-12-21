@@ -71,7 +71,7 @@ async def create_task_cancel_time_error(message: types.Message) -> None:
 
 
 # Непредвиденная ситуация, например эмодзи, картинка и т.д.
-@router.message(CreateTaskStates)
+@router.message(*CreateTaskStates)
 async def create_task_error(message: types.Message) -> None:
     await message.answer(text='Упс!'
                               '\nНичего не могу понять.'

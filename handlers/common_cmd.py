@@ -1,7 +1,7 @@
 from aiogram import Router, F, types, filters
 from aiogram.fsm.context import FSMContext
 
-from handlers.states import CreateTaskStates, DeleteTaskStates
+from handlers.states import CreateTaskStates
 
 
 router = Router()
@@ -26,12 +26,6 @@ async def cmd_create(message: types.Message, state: FSMContext) -> None:
     await state.set_state(CreateTaskStates.create_title)
     await message.answer(text='Готов к созданию задачи.'
                               '\nНапишите название для задачи (до 30-ти символов)')
-
-
-@router.message(filters.Command('delete'))
-async def cmd_delete(message: types.Message, state: FSMContext) -> None:
-    await state.set_state(DeleteTaskStates.delete_start)
-    await message.answer(text='Готов к удалению задачи')
 
 
 @router.message(filters.Command('cancel'))

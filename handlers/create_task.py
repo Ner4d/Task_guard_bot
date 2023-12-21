@@ -40,7 +40,8 @@ async def create_task_description_ok(message: types.Message,
     await state.update_data(description=description)
     await state.set_state(state=CreateTaskStates.create_cancel_time)
     # Необходимо подготовить клавиатуру, либо парсинг текста для извлечения даты и времени
-    await message.answer(text='Отлично. Теперь необходимо назначит крайний срок')
+    await message.answer(text='Отлично. Теперь необходимо назначить крайний срок'
+                              '\nВведите дату и время в формате ДД.ММ.ГГГГ ЧЧ:ММ')
 
 
 # Шаг 2-ой - ошибка

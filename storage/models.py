@@ -1,4 +1,5 @@
-from peewee import *
+from peewee import Model, IntegerField, CharField, ForeignKeyField, TextField, DateTimeField
+
 from settings import DATA_BASE
 from datetime import datetime
 from collections import namedtuple
@@ -14,7 +15,6 @@ class BaseModel(Model):
 # Модель для связи пользователя с только его задачами
 class UserModel(BaseModel):
     user_id = IntegerField(unique=True)
-    username = CharField()
 
 
 # Сама модель задач с необходимыми данными
@@ -29,7 +29,7 @@ class TaskModel(BaseModel):
     # Status
     status = namedtuple('status', ['created', 'in_process', 'failed', 'completed'])
     STATUSES = status('Создана', 'В процессе', 'Не выполнена', 'Выполнена')
-    status = CharField(default=STATUSES.created)
+    status = CharField(default=STATUSES.in_process)
 
 
 def create_db_tables():

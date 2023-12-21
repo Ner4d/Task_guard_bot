@@ -13,7 +13,7 @@ class HasDateTimeFilter(BaseFilter):
         find: re.Match | None = re.search(pattern=pattern, string=text)
         if find:
             date_string: str = find.group()
-            return datetime.strptime(__date_string=date_string, __format='%d.%m.%Y %H:%M')
+            return datetime.strptime(date_string,'%d.%m.%Y %H:%M')
         return False
 
     async def __call__(self, message: Message) -> bool | dict:

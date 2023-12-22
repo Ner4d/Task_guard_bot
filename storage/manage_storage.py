@@ -32,6 +32,27 @@ def completed_task(task_id: int) -> None:
     return
 
 
+def in_process_task(task_id: int) -> None:
+    task: TaskModel = TaskModel.get(TaskModel.task_id == task_id)
+    task.status = task.STATUSES.in_process
+    task.save()
+    return
+
+
+def failed_task(task_id: int) -> None:
+    task: TaskModel = TaskModel.get(TaskModel.task_id == task_id)
+    task.status = task.STATUSES.failed
+    task.save()
+    return
+
+
+async def check_task_time(task: TaskModel) -> None:
+    if task.cancel_task <= datetime.now():
+        task.status = task.STATUSES.overtime
+        task.save()
+    return
+
+
 def delete_task(task_id: int) -> None:
     task: TaskModel = TaskModel.get(TaskModel.task_id == task_id)
     task.delete_instance()

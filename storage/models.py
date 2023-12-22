@@ -27,8 +27,8 @@ class TaskModel(BaseModel):
     cancel_task = DateTimeField()
 
     # Status
-    status = namedtuple('status', ['created', 'in_process', 'failed', 'completed'])
-    STATUSES = status('Создана', 'В процессе', 'Не выполнена', 'Выполнена')
+    status = namedtuple('status', ['in_process', 'failed', 'completed', 'overtime'])
+    STATUSES = status('В процессе', 'Не выполнена', 'Выполнена', 'Просрочена')
     status = CharField(default=STATUSES.in_process)
 
 

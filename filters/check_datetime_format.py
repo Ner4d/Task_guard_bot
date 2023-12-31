@@ -22,3 +22,13 @@ class HasDateTimeFilter(BaseFilter):
         if find_datetime:
             return {'cancel_time': find_datetime}
         return False
+
+
+def correct_day(day: int, month: int, year: int, hour: int, minute: int) -> datetime:
+    try:
+        some_date = datetime(day=day, month=month, year=year, hour=hour, minute=minute)
+    except ValueError:
+        if day <= 1:
+            return datetime.now()  # Подстраховка
+        return correct_day(day=day - 1, month=month, year=year, hour=hour, minute=minute)
+    return some_date

@@ -4,8 +4,8 @@ from aiogram import Router, F, types, filters
 from aiogram.fsm.context import FSMContext
 
 from handlers.states import CreateTaskStates
-from filters import HasDateTimeFilter
-from storage.manage_storage import add_task
+from keyboards.kb_cancel_time import make_kb_change_default
+from static import I_TEXT
 
 
 router = Router()
@@ -39,9 +39,11 @@ async def create_task_description_ok(message: types.Message,
     description: str | None = message.text if not command else None
     await state.update_data(description=description)
     await state.set_state(state=CreateTaskStates.create_cancel_time)
-    # Необходимо подготовить клавиатуру, либо парсинг текста для извлечения даты и времени
+    keyboard: types.InlineKeyboardMarkup = await make_kb_change_default()
     await message.answer(text='Отлично. Теперь необходимо назначить крайний срок'
-                              '\nВведите дату и время в формате ДД.ММ.ГГГГ ЧЧ:ММ')
+                              f'\n{I_TEXT.format("По умолчанию: завтра в это же время")}',
+                         reply_markup=keyboard,
+                         parse_mode='HTML')  # Далее следует логика в handlers.create_cancel_time
 
 
 # Шаг 2-ой - ошибка
@@ -50,24 +52,6 @@ async def create_task_description_long(message: types.Message) -> None:
     await message.answer(text='Слишком длинное описание.'
                               '\nПопробуйте снова или'
                               '\n/cancel чтобы отменить сохранение')
-
-
-# Шаг 3-ий - успех
-@router.message(CreateTaskStates.create_cancel_time, F.text, HasDateTimeFilter())
-async def create_task_cancel_time_ok(message: types.Message, cancel_time: datetime, state: FSMContext) -> None:
-    cancel_task: datetime = cancel_time
-    user_id: int = message.from_user.id
-    data: dict = await state.get_data()
-    add_task(user_id=user_id, title=data['title'], description=data['description'], cancel_task=cancel_task)
-    await state.clear()
-    await message.answer(text='Задача поставлена!')
-
-
-# Шаг 3-ий - ошибка
-@router.message(CreateTaskStates.create_cancel_time, F.text)
-async def create_task_cancel_time_error(message: types.Message) -> None:
-    await message.answer(text='Упс!'
-                              '\nНе могу определить дату')
 
 
 # Непредвиденная ситуация, например эмодзи, картинка и т.д.

@@ -14,7 +14,9 @@ def add_task(user_id: int, title: str, cancel_task: datetime, description: None 
         add_user(user_id=user_id)
     owner: UserModel = UserModel.get(UserModel.user_id == user_id)
     task_id: int = randint(10**6, (10**8)-1)
-    TaskModel.create(owner=owner, task_id=task_id, title=title, cancel_task=cancel_task, description=description).save()
+    sort_time = cancel_task.timestamp()
+    TaskModel.create(owner=owner, task_id=task_id, title=title, cancel_task=cancel_task, description=description,
+                     sort_time=sort_time).save()
     return
 
 
@@ -22,7 +24,7 @@ def get_tasks(user_id: int) -> list:
     if not UserModel.select().where(UserModel.user_id == user_id):
         add_user(user_id=user_id)
     owner: UserModel = UserModel.get(UserModel.user_id == user_id)
-    return TaskModel.select().where(TaskModel.owner == owner)
+    return TaskModel.select().where(TaskModel.owner == owner).order_by('sort_time')
 
 
 def completed_task(task_id: int) -> None:

@@ -1,8 +1,5 @@
-from datetime import datetime, time
+from math import ceil
 
+a = 7
 
-some_date = datetime(day=31, month=12, year=2023)
-print(some_date)
-some_date += time(hour=18, minute=43)
-print(some_date)
-
+print(ceil(1.1))

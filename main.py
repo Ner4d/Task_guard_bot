@@ -16,6 +16,7 @@ dp.include_routers(common_cmd.router, manage_tasks.router, create_task.router, c
 
 
 async def main():
+    await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 

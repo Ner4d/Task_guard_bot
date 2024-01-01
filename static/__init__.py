@@ -6,6 +6,8 @@ __all__: list[str] = [
     'red_circle_emoji',
     'orange_circle_emoji',
     'blue_circle_emoji',
+    'red_cross_emoji',
+    'yellow_ticket_emoji',
     'I_TEXT',
     'B_TEXT',
 ]

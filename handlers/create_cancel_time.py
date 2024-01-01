@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from handlers.states import CreateTaskStates
 from keyboards.kb_cancel_time import (make_kb_change_unit, month_list, make_kb_month, make_kb_year, make_kb_days,
                                       make_kb_hour, make_kb_minute)
+from keyboards.kb_common_cmd import kb_main_menu
 from static.font_styles import B_TEXT
 from filters import CheckIntText, correct_day
 from storage.manage_storage import add_task
@@ -15,10 +16,11 @@ router = Router()
 
 @router.callback_query(CreateTaskStates.create_cancel_time, F.data == 'default_time')
 async def default_time(query: types.CallbackQuery, state: FSMContext) -> None:
+    keyboard = await kb_main_menu()
     cancel_time = datetime.now() + timedelta(days=1)
     data: dict = await state.get_data()
     add_task(user_id=query.from_user.id, title=data['title'], description=data['description'], cancel_task=cancel_time)
-    await query.message.edit_text('Задача поставлена!')
+    await query.message.edit_text('Задача поставлена!', reply_markup=keyboard)
     await state.clear()
     await query.answer()
 
@@ -77,7 +79,7 @@ async def cancel_time_month_change(query: types.CallbackQuery) -> None:
 async def cancel_time_year(query: types.CallbackQuery, state: FSMContext, number: int | None = None) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_change_unit()
     this_datetime = datetime.now()
-    year: int = number or datetime.month
+    year: int = number or this_datetime.year
     await state.update_data(year=year)
     await state.set_state(CreateTaskStates.cancel_time_hour)
     await query.message.edit_text(text=f'Выбрать текущий час: {B_TEXT.format(this_datetime.hour)}',
@@ -113,14 +115,15 @@ async def cancel_time_hour_change(query: types.CallbackQuery) -> None:
 @router.callback_query(CreateTaskStates.cancel_time_minute, F.data == 'this')
 @router.callback_query(CreateTaskStates.cancel_time_minute, F.data, CheckIntText())
 async def cancel_time_minute(query: types.CallbackQuery, state: FSMContext, number: int | None = None) -> None:
+    keyboard = await kb_main_menu()
     this_datetime = datetime.now()
     minute: int = number or this_datetime.minute
     data: dict = await state.get_data()
-    cancel_time = correct_day(day=data['day'], month=data['month'], year=data['year'], hour=data['hour'], minute=minute)
-    if cancel_time:
-        add_task(user_id=query.from_user.id, title=data['title'], cancel_task=cancel_time, description=data['description'])
+    day = correct_day(day=data['day'], month=data['month'], year=data['year'])
+    cancel_time = datetime(day=day, month=data['month'], year=data['year'], hour=data['hour'], minute=minute)
+    add_task(user_id=query.from_user.id, title=data['title'], cancel_task=cancel_time, description=data['description'])
     await state.clear()
-    await query.message.edit_text(text='Задача поставлена!')
+    await query.message.edit_text(text='Задача поставлена!', reply_markup=keyboard)
     await query.answer()
 
 

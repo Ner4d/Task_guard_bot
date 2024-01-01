@@ -24,11 +24,21 @@ class HasDateTimeFilter(BaseFilter):
         return False
 
 
-def correct_day(day: int, month: int, year: int, hour: int, minute: int) -> datetime:
-    try:
-        some_date = datetime(day=day, month=month, year=year, hour=hour, minute=minute)
-    except ValueError:
-        if day <= 1:
-            return datetime.now()  # Подстраховка
-        return correct_day(day=day - 1, month=month, year=year, hour=hour, minute=minute)
-    return some_date
+def correct_day(day: int, month: int, year: int):
+    leap_year = (not year % 4) or (not year % 100 and not year % 400)
+    month_days_list = {
+        1: 31,
+        2: 29 if leap_year else 28,
+        3: 31,
+        4: 30,
+        5: 31,
+        6: 30,
+        7: 31,
+        8: 31,
+        9: 30,
+        10: 31,
+        11: 30,
+        12: 31,
+    }
+    max_day = month_days_list[month]
+    return day if day <= max_day else max_day

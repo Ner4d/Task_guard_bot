@@ -10,3 +10,7 @@ class CreateTaskStates(StatesGroup):
     cancel_time_year = State()
     cancel_time_hour = State()
     cancel_time_minute = State()
+
+
+class ManageTaskStates(StatesGroup):
+    manage_task = State()

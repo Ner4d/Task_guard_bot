@@ -23,8 +23,10 @@ class TaskModel(BaseModel):
     task_id = IntegerField(unique=True)
     title = CharField()
     description = TextField(null=True)
+
     start_task = DateTimeField(default=datetime.now)
     cancel_task = DateTimeField()
+    sort_time = IntegerField()
 
     # Status
     status = namedtuple('status', ['in_process', 'failed', 'completed', 'overtime'])

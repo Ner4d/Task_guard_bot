@@ -77,8 +77,9 @@ async def make_kb_hour() -> types.InlineKeyboardMarkup:
 
 async def make_kb_minute() -> types.InlineKeyboardMarkup:
     kb_builder = InlineKeyboardBuilder()
-    for minute in range(60):
+    for minute in range(13):
+        minute *= 5
         str_minute = str(minute)
         kb_builder.add(types.InlineKeyboardButton(text=str_minute, callback_data=str_minute))
-    kb_builder.adjust(6)
+    kb_builder.adjust(4)
     return kb_builder.as_markup()

@@ -12,5 +12,13 @@ class CreateTaskStates(StatesGroup):
     cancel_time_minute = State()
 
 
-class ManageTaskStates(StatesGroup):
-    manage_task = State()
+class RedactingTaskStates(StatesGroup):
+    redact_title = State()
+    redact_description = State()
+    redact_date_day = State()
+    redact_date_month = State()
+    redact_date_year = State()
+    redact_time_hour = State()
+    redact_time_minute = State()
+    redact_result = State()
+

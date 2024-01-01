@@ -11,12 +11,12 @@ async def make_kb(task_id: int, status: str) -> types.InlineKeyboardMarkup:
     if status == TaskModel.STATUSES.completed:
         buttons_row.append(types.InlineKeyboardButton(text='Ещё в процессе', callback_data=f'inProcess_{task_id}'))
         buttons_row.append(types.InlineKeyboardButton(text='Не выполнена', callback_data=f'failed_{task_id}'))
-    elif status == TaskModel.STATUSES.in_process:
+    elif status in (TaskModel.STATUSES.in_process, TaskModel.STATUSES.overtime):
         buttons_row.append(types.InlineKeyboardButton(text='Завершить', callback_data=f'done_{task_id}'))
         buttons_row.append(types.InlineKeyboardButton(text='Не выполнена', callback_data=f'failed_{task_id}'))
-    else:  # Я предполагаю что в оставшихся варианта она либо в статусе "Не завершена", либо "Просрочена"
+    else:  # Я предполагаю что в оставшихся варианта задача будет в статусе "Не завершена"
         buttons_row.append(types.InlineKeyboardButton(text='Завершить', callback_data=f'done_{task_id}'))
-        buttons_row.append(types.InlineKeyboardButton(text='Не выполнена', callback_data=f'failed_{task_id}'))
+        buttons_row.append(types.InlineKeyboardButton(text='Ещё в процессе', callback_data=f'inProcess_{task_id}'))
 
     buttons_column: list[list[types.InlineKeyboardButton]] = [buttons_row]
 

@@ -6,9 +6,8 @@ from aiogram.fsm.context import FSMContext
 from storage.manage_storage import get_tasks, delete_task, completed_task, in_process_task, check_task_time, failed_task
 from storage.models import TaskModel
 from keyboards.kb_manage_task import make_kb, make_kb_end
-from keyboards.kb_common_cmd import kb_back_in_menu
+from keyboards.kb_common_cmd import kb_inline_back_in_menu
 from keyboards.kb_cancel_time import month_list
-from handlers.states import ManageTaskStates
 import static
 
 router = Router()
@@ -25,12 +24,17 @@ async def prepare_text_task(task: TaskModel | int) -> str:
     """
     if not isinstance(task, TaskModel):
         task = TaskModel.get(TaskModel.task_id == task)
+
+    if task.status == TaskModel.STATUSES.in_process:
+        await check_task_time(task=task)
+
     marks_for_status: dict[str, str] = {
         TaskModel.STATUSES.in_process: static.green_circle_emoji,
         TaskModel.STATUSES.completed: static.blue_circle_emoji,
         TaskModel.STATUSES.failed: static.red_circle_emoji,
         TaskModel.STATUSES.overtime: static.orange_circle_emoji
     }
+
     text_parts: list[str] = [f'Задача: {static.B_TEXT.format(task.title)}']
 
     if task.description:
@@ -39,7 +43,7 @@ async def prepare_text_task(task: TaskModel | int) -> str:
 
     month = task.cancel_task.month
     cancel_time_format = task.cancel_task.strftime('%d {} %Y - %H:%M').format(month_list[month])
-    deadline_text = f'Дедлайн: {static.B_TEXT.format(cancel_time_format)}'
+    deadline_text = f'Крайний срок: {static.B_TEXT.format(cancel_time_format)}'
     text_parts.append(deadline_text)
     text_parts.append(f'Cтатус: {marks_for_status[task.status]}{task.status}')
     return '\n'.join(text_parts)
@@ -50,7 +54,7 @@ async def cmd_manage_tasks(query: types.CallbackQuery, state: FSMContext) -> Non
     user_id: int = query.from_user.id
     tasks_list: list[TaskModel] = get_tasks(user_id=user_id)
     if not tasks_list:
-        keyboard = await kb_back_in_menu()
+        keyboard = await kb_inline_back_in_menu()
         await query.message.edit_text(text='Какие-либо задачи отсутствуют', reply_markup=keyboard)
         return
     start_index = 0
@@ -107,7 +111,6 @@ async def query_delete_task(callback: types.CallbackQuery) -> None:
     task_id: int = await take_task_id_from_task(callback=callback)
     delete_task(task_id=task_id)
     await callback.message.edit_text(text='Задача удалена')
-    await callback.answer()
 
 
 @router.callback_query(F.data.startswith('done'))
@@ -119,7 +122,6 @@ async def query_done_task(callback: types.CallbackQuery) -> None:
     kb = await make_kb(task_id=task_id, status=TaskModel.STATUSES.completed)
 
     await callback.message.edit_text(text=text, reply_markup=kb, parse_mode='HTML')
-    await callback.answer()
 
 
 @router.callback_query(F.data.startswith('inProcess'))
@@ -127,11 +129,10 @@ async def query_in_process_task(callback: types.CallbackQuery) -> None:
     task_id: int = await take_task_id_from_task(callback=callback)
     in_process_task(task_id=task_id)
 
-    text: str = await prepare_text_task(task=task_id)
     kb = await make_kb(task_id=task_id, status=TaskModel.STATUSES.in_process)
+    text: str = await prepare_text_task(task=task_id)
 
     await callback.message.edit_text(text=text, reply_markup=kb, parse_mode='HTML')
-    await callback.answer()
 
 
 @router.callback_query(F.data.startswith('failed'))
@@ -143,4 +144,3 @@ async def query_failed_task(callback: types.CallbackQuery) -> None:
     kb = await make_kb(task_id=task_id, status=TaskModel.STATUSES.failed)
 
     await callback.message.edit_text(text=text, reply_markup=kb, parse_mode='HTML')
-    await callback.answer()

@@ -9,7 +9,7 @@ def add_user(user_id: int) -> None:
     return
 
 
-def add_task(user_id: int, title: str, cancel_task: datetime, description: None | str = None) -> None:
+def add_task(user_id: int, title: str, cancel_task: datetime, description: None | str) -> None:
     if not UserModel.select().where(UserModel.user_id == user_id):
         add_user(user_id=user_id)
     owner: UserModel = UserModel.get(UserModel.user_id == user_id)
@@ -50,7 +50,7 @@ def failed_task(task_id: int) -> None:
 
 async def check_task_time(task: TaskModel) -> None:
     if task.cancel_task <= datetime.now():
-        task.status = task.STATUSES.overtime
+        task.status = TaskModel.STATUSES.overtime
         task.save()
     return
 

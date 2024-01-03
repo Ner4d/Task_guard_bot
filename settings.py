@@ -1,3 +1,4 @@
+import gettext
 import environ
 from os import getcwd, path
 from peewee import SqliteDatabase
@@ -14,3 +15,15 @@ BOT_TOKEN = env('BOT_TOKEN')
 
 # Конфигурация базы данных
 DATA_BASE = SqliteDatabase('DataBaseSQLite.db')
+
+
+# Локализация
+
+LOCALES_DIR = path.join(BASE_DIR, 'locales')
+
+lang = 'en'
+
+gettext.bindtextdomain(domain=lang, localedir=LOCALES_DIR)
+gettext.textdomain(lang)
+lang_pack = gettext.translation(domain=lang, localedir=LOCALES_DIR)
+

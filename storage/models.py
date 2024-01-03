@@ -7,6 +7,8 @@ from collections import namedtuple
 
 # Базовая модель с настроенным подключением к конкретной базе данных для последующих моделей
 class BaseModel(Model):
+    language = CharField(default='ru')
+
 
     class Meta:
         database = DATA_BASE
@@ -32,6 +34,12 @@ class TaskModel(BaseModel):
     status = namedtuple('status', ['in_process', 'failed', 'completed', 'overtime'])
     STATUSES = status('В процессе', 'Не выполнена', 'Выполнена', 'Просрочена')
     status = CharField(default=STATUSES.in_process)
+
+
+class PersonalUserConf(BaseModel):
+    user = ForeignKeyField(UserModel, backref='conf')
+    language = CharField(default='ru')
+
 
 
 def create_db_tables():

@@ -1,5 +1,15 @@
-from math import ceil
+from settings import BASE_DIR
 
-a = 7
+import gettext
+import os
 
-print(ceil(1.1))
+
+localdir = os.path.join(BASE_DIR, 'locales')
+translate = gettext.translation('ru', localdir, ['ru'])
+_ = translate.gettext
+
+
+print(_('Hello'))
+
+
+

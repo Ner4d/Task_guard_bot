@@ -3,26 +3,28 @@ from datetime import datetime
 from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from gettext import gettext as _
+
 month_list = [
-    'Январь',
-    'Февраль',
-    'Март',
-    'Апрель',
-    'Май',
-    'Июнь',
-    'Июль',
-    'Август',
-    'Сентябрь',
-    'Октябрь',
-    'Ноябрь',
-    'Декабрь',
+    _('Январь'),
+    _('Февраль'),
+    _('Март'),
+    _('Апрель'),
+    _('Май'),
+    _('Июнь'),
+    _('Июль'),
+    _('Август'),
+    _('Сентябрь'),
+    _('Октябрь'),
+    _('Ноябрь'),
+    _('Декабрь'),
 ]
 
 
 async def make_kb_change_default() -> types.InlineKeyboardMarkup:
     buttons: list[list] = [
-        [types.InlineKeyboardButton(text='По умолчанию', callback_data='default_time')],
-        [types.InlineKeyboardButton(text='Изменить', callback_data='change_datetime')]
+        [types.InlineKeyboardButton(text=_('По умолчанию'), callback_data='default_time')],
+        [types.InlineKeyboardButton(text=_('Изменить'), callback_data='change_datetime')]
     ]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
@@ -30,8 +32,8 @@ async def make_kb_change_default() -> types.InlineKeyboardMarkup:
 
 async def make_kb_change_unit() -> types.InlineKeyboardMarkup:
     buttons: list[list] = [
-        [types.InlineKeyboardButton(text='Подтвердить', callback_data='this')],
-        [types.InlineKeyboardButton(text='Изменить', callback_data='change')],
+        [types.InlineKeyboardButton(text=_('Подтвердить'), callback_data='this')],
+        [types.InlineKeyboardButton(text=_('Изменить'), callback_data='change')],
     ]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
@@ -91,11 +93,11 @@ async def make_kb_minute() -> types.InlineKeyboardMarkup:
 
 async def make_kb_result() -> types.InlineKeyboardMarkup:
     buttons: list[list] = [
-        [types.InlineKeyboardButton(text='Сохранить', callback_data='save')],
-        [types.InlineKeyboardButton(text='Изменить название', callback_data='redact_title')],
-        [types.InlineKeyboardButton(text='Изменить описание', callback_data='redact_description')],
-        [types.InlineKeyboardButton(text='Изменить крайний срок', callback_data='redact_datetime')],
-        [types.InlineKeyboardButton(text='Отмена', callback_data='cancel')],
+        [types.InlineKeyboardButton(text=_('Сохранить'), callback_data='save')],
+        [types.InlineKeyboardButton(text=_('Изменить название'), callback_data='redact_title')],
+        [types.InlineKeyboardButton(text=_('Изменить описание'), callback_data='redact_description')],
+        [types.InlineKeyboardButton(text=_('Изменить крайний срок'), callback_data='redact_datetime')],
+        [types.InlineKeyboardButton(text=_('Отмена'), callback_data='cancel')],
     ]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard

@@ -1,3 +1,4 @@
+from gettext import gettext as _
 from datetime import datetime
 
 from aiogram import F, Router, types
@@ -12,12 +13,12 @@ router = Router()
 
 
 async def prepare_text_to_result(title: str, description: str | None, cancel_time: datetime) -> str:
-    text_parts: list = [f'Название: {B_TEXT.format(title)}']
+    text_parts: list = [_('Название: {}').format(B_TEXT.format(title))]
     if description:
-        text_parts.append(f'Описание: {I_TEXT.format(description)}')
+        text_parts.append(_('Описание: {}').format(I_TEXT.format(description)))
     word_month = month_list[cancel_time.month]
     format_datetime = cancel_time.strftime('%d {} %Y - %H:%M').format(word_month)
-    text_parts.append(f'Крайний срок: {B_TEXT.format(format_datetime)}')
+    text_parts.append(_('Крайний срок: {}').format(B_TEXT.format(format_datetime)))
     return '\n'.join(text_parts)
 
 
@@ -38,4 +39,4 @@ async def redact_title_ok(message: types.Message, state: FSMContext) -> None:
 @router.callback_query(F.data == 'redact_description')
 async def button_redact_description(query: types.CallbackQuery, state: FSMContext) -> None:
     await state.set_state(RedactingTaskStates.redact_description)
-    await query.message.edit_text(text='Напишите описание (до 128-ти символов)')
+    await query.message.edit_text(text=_('Напишите описание (до 128-ти символов)'))

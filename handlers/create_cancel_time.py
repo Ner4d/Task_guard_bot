@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from gettext import gettext as _
+
 
 from aiogram import Router, F, types
 from aiogram.fsm.context import FSMContext
@@ -22,7 +24,7 @@ async def save_result_task(query: types.CallbackQuery, state: FSMContext) -> Non
     user_id: int = query.from_user.id
     add_task(user_id=user_id, title=data['title'], cancel_task=data['cancel_time'], description=data['description'])
     await state.clear()
-    await query.message.edit_text(text='Задача готова!', reply_markup=keyboard)
+    await query.message.edit_text(text=_('Задача готова!'), reply_markup=keyboard)
 
 
 @router.callback_query(RedactingTaskStates.redact_result, F.data == 'this')
@@ -52,7 +54,7 @@ async def create_cancel_time(query: types.CallbackQuery, state: FSMContext) -> N
     else:  # query.data == 'redact_date'
         await state.set_state(RedactingTaskStates.redact_date_day)
     this_day = str(datetime.now().day)
-    await query.message.edit_text(text=f'Выбрать текущий день: {B_TEXT.format(this_day)}',
+    await query.message.edit_text(text=_('Выбрать текущий день: {}').format(B_TEXT.format(this_day)),
                                   reply_markup=keyboard,
                                   parse_mode='HTML')
 
@@ -61,7 +63,7 @@ async def create_cancel_time(query: types.CallbackQuery, state: FSMContext) -> N
 @router.callback_query(RedactingTaskStates.redact_date_day, F.data == 'change')
 async def cancel_time_day_change(query: types.CallbackQuery) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_days()
-    await query.message.edit_text(text='Выберите день', reply_markup=keyboard)
+    await query.message.edit_text(text=_('Выберите день'), reply_markup=keyboard)
 
 
 @router.callback_query(RedactingTaskStates.redact_date_day, F.data == 'this')
@@ -79,7 +81,7 @@ async def cancel_time_day(query: types.CallbackQuery, state: FSMContext, number:
     keyboard: types.InlineKeyboardMarkup = await make_kb_change_unit()
     day: int = number or this_datetime.day
     await state.update_data(day=day)
-    await query.message.edit_text(text=f'Выбрать текущий месяц: {B_TEXT.format(this_month)}',
+    await query.message.edit_text(text=_('Выбрать текущий месяц: {}').format(B_TEXT.format(this_month)),
                                   reply_markup=keyboard,
                                   parse_mode='HTML')
 
@@ -88,7 +90,7 @@ async def cancel_time_day(query: types.CallbackQuery, state: FSMContext, number:
 @router.callback_query(CreateTaskStates.cancel_time_month, F.data == 'change')
 async def cancel_time_month_change(query: types.CallbackQuery) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_month()
-    await query.message.edit_text(text='Выберите месяц', reply_markup=keyboard)
+    await query.message.edit_text(text=_('Выберите месяц'), reply_markup=keyboard)
 
 
 @router.callback_query(RedactingTaskStates.redact_date_month, F.data == 'this')
@@ -105,7 +107,7 @@ async def cancel_time_month(query: types.CallbackQuery, state: FSMContext, numbe
         await state.set_state(CreateTaskStates.cancel_time_year)
     else:
         await state.set_state(RedactingTaskStates.redact_date_year)
-    await query.message.edit_text(text=f'Выбрать текущий год: {B_TEXT.format(this_datetime.year)}',
+    await query.message.edit_text(text=_('Выбрать текущий год: {}').format(B_TEXT.format(this_datetime.year)),
                                   reply_markup=keyboard,
                                   parse_mode='HTML')
 
@@ -114,7 +116,7 @@ async def cancel_time_month(query: types.CallbackQuery, state: FSMContext, numbe
 @router.callback_query(CreateTaskStates.cancel_time_year, F.data == 'change')
 async def cancel_time_year_change(query: types.CallbackQuery) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_year()
-    await query.message.edit_text(text='Выберите год', reply_markup=keyboard)
+    await query.message.edit_text(text=_('Выберите год'), reply_markup=keyboard)
 
 
 @router.callback_query(RedactingTaskStates.redact_date_year, F.data == 'this')
@@ -131,7 +133,7 @@ async def cancel_time_year(query: types.CallbackQuery, state: FSMContext, number
         await state.set_state(CreateTaskStates.cancel_time_hour)
     else:  # state_name == RedactingTaskStates.redact_date_year
         await state.set_state(RedactingTaskStates.redact_time_hour)
-    await query.message.edit_text(text=f'Выбрать текущий час: {B_TEXT.format(this_datetime.hour)}',
+    await query.message.edit_text(text=_('Выбрать текущий час: {}').format(B_TEXT.format(this_datetime.hour)),
                                   reply_markup=keyboard,
                                   parse_mode='HTML')
 
@@ -140,7 +142,7 @@ async def cancel_time_year(query: types.CallbackQuery, state: FSMContext, number
 @router.callback_query(CreateTaskStates.cancel_time_hour, F.data == 'change')
 async def cancel_time_hour_change(query: types.CallbackQuery) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_hour()
-    await query.message.edit_text(text='Выберите час', reply_markup=keyboard)
+    await query.message.edit_text(text=_('Выберите час'), reply_markup=keyboard)
 
 
 @router.callback_query(RedactingTaskStates.redact_time_hour, F.data == 'this')
@@ -157,7 +159,7 @@ async def cancel_time_hour(query: types.CallbackQuery, state: FSMContext, number
         await state.set_state(CreateTaskStates.cancel_time_minute)
     else:
         await state.set_state(RedactingTaskStates.redact_time_minute)
-    await query.message.edit_text(text=f'Выбрать текущую минуту: {B_TEXT.format(this_datetime.minute)}',
+    await query.message.edit_text(text=_('Выбрать текущую минуту: {}').format(B_TEXT.format(this_datetime.minute)),
                                   reply_markup=keyboard,
                                   parse_mode='HTML')
 
@@ -166,7 +168,7 @@ async def cancel_time_hour(query: types.CallbackQuery, state: FSMContext, number
 @router.callback_query(CreateTaskStates.cancel_time_minute, F.data == 'change')
 async def cancel_time_minute_change(query: types.CallbackQuery) -> None:
     keyboard = await make_kb_minute()
-    await query.message.edit_text('Выберите минуту', reply_markup=keyboard)
+    await query.message.edit_text(_('Выберите минуту'), reply_markup=keyboard)
 
 
 @router.callback_query(RedactingTaskStates.redact_time_minute, F.data == 'this')

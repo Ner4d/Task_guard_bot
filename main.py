@@ -1,12 +1,19 @@
+import os
 import asyncio
 import logging
 
 from aiogram import Dispatcher, Bot
 from aiogram.types import bot_command as bc
 
-from settings import BOT_TOKEN
+from settings import BOT_TOKEN, BASE_DIR, lang_pack
 from storage.models import create_db_tables
 from handlers import common_cmd, create_task, manage_tasks, create_cancel_time, redacting_task
+
+locale_dir = os.path.join(BASE_DIR, 'locales')
+
+# language
+
+lang_pack.install()
 
 # Логирование
 logging.basicConfig(level=logging.INFO)

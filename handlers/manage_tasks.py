@@ -1,4 +1,5 @@
 from math import ceil
+from gettext import gettext as _
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
@@ -35,17 +36,17 @@ async def prepare_text_task(task: TaskModel | int) -> str:
         TaskModel.STATUSES.overtime: static.orange_circle_emoji
     }
 
-    text_parts: list[str] = [f'Задача: {static.B_TEXT.format(task.title)}']
+    text_parts: list[str] = [_('Задача: {}').format(static.B_TEXT.format(task.title))]
 
     if task.description:
-        decs_for_text = f'Описание: {static.I_TEXT.format(task.description)}'
+        decs_for_text = _('Описание: {}').format(static.I_TEXT.format(task.description))
         text_parts.append(decs_for_text)
 
     month = task.cancel_task.month
     cancel_time_format = task.cancel_task.strftime('%d {} %Y - %H:%M').format(month_list[month])
-    deadline_text = f'Крайний срок: {static.B_TEXT.format(cancel_time_format)}'
+    deadline_text = _('Крайний срок: {}').format(static.B_TEXT.format(cancel_time_format))
     text_parts.append(deadline_text)
-    text_parts.append(f'Cтатус: {marks_for_status[task.status]}{task.status}')
+    text_parts.append(_('Cтатус: {}{}').format(marks_for_status[task.status], _(task.status)))
     return '\n'.join(text_parts)
 
 
@@ -55,7 +56,7 @@ async def cmd_manage_tasks(query: types.CallbackQuery, state: FSMContext) -> Non
     tasks_list: list[TaskModel] = get_tasks(user_id=user_id)
     if not tasks_list:
         keyboard = await kb_inline_back_in_menu()
-        await query.message.edit_text(text='Какие-либо задачи отсутствуют', reply_markup=keyboard)
+        await query.message.edit_text(text=_('Какие-либо задачи отсутствуют'), reply_markup=keyboard)
         return
     start_index = 0
     await state.update_data(start_index=start_index)
@@ -110,7 +111,7 @@ async def button_next_page(query: types.CallbackQuery, state: FSMContext) -> Non
 async def query_delete_task(callback: types.CallbackQuery) -> None:
     task_id: int = await take_task_id_from_task(callback=callback)
     delete_task(task_id=task_id)
-    await callback.message.edit_text(text='Задача удалена')
+    await callback.message.edit_text(text=_('Задача удалена'))
 
 
 @router.callback_query(F.data.startswith('done'))

@@ -1,12 +1,13 @@
 from aiogram.filters import BaseFilter
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
 
 class CheckIntText(BaseFilter):
-    int_str = '1234567890'
+    async def __call__(self, query_message: CallbackQuery | Message) -> bool | dict:
+        text = query_message.data if isinstance(query_message, CallbackQuery) else query_message.text
+        try:
+            number = int(text)
+        except ValueError:
+            return False
+        return {'number': number}
 
-    async def __call__(self, query: CallbackQuery) -> bool | dict:
-        if query.data[0] in self.int_str:
-            number = int(query.data)
-            return {'number': number}
-        return False

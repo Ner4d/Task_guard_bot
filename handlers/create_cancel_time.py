@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from gettext import gettext as _
 
 
@@ -22,7 +22,7 @@ async def save_result_task(query: types.CallbackQuery, state: FSMContext) -> Non
     keyboard = await kb_inline_main_menu()
     data: dict = await state.get_data()
     user_id: int = query.from_user.id
-    add_task(user_id=user_id, title=data['title'], cancel_task=data['cancel_time'], description=data['description'])
+    await add_task(user_id=user_id, title=data['title'], cancel_task=data['cancel_time'], description=data['description'])
     await state.clear()
     await query.message.edit_text(text=_('Задача готова!'), reply_markup=keyboard)
 
@@ -32,9 +32,10 @@ async def save_result_task(query: types.CallbackQuery, state: FSMContext) -> Non
 async def default_time(query: types.CallbackQuery, state: FSMContext) -> None:
     keyboard = await make_kb_result()
     data: dict = await state.get_data()
+    user_tz = timezone(timedelta(days=data.get('user_tz', 3)))
     state_name = await state.get_state()
     if state_name == CreateTaskStates.create_cancel_time:
-        cancel_time = datetime.now() + timedelta(days=1)
+        cancel_time = datetime.now(tz=user_tz) + timedelta(days=1)
     else:
         cancel_time = datetime(day=data['day'], month=data['month'], year=data['year'], hour=data['hour'],
                                minute=data['minute'])
@@ -49,11 +50,13 @@ async def default_time(query: types.CallbackQuery, state: FSMContext) -> None:
 @router.callback_query(CreateTaskStates.create_cancel_time, F.data == 'change_datetime')
 async def create_cancel_time(query: types.CallbackQuery, state: FSMContext) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_change_unit()
+    user_tz: int = (await state.get_data()).get('user_tz', 3)
+    user_tz: timezone = timezone(timedelta(days=user_tz))
     if query.data == 'change_datetime':
         await state.set_state(CreateTaskStates.cancel_time_day)
     else:  # query.data == 'redact_date'
         await state.set_state(RedactingTaskStates.redact_date_day)
-    this_day = str(datetime.now().day)
+    this_day = str(datetime.now(tz=user_tz).day)
     await query.message.edit_text(text=_('Выбрать текущий день: {}').format(B_TEXT.format(this_day)),
                                   reply_markup=keyboard,
                                   parse_mode='HTML')
@@ -72,11 +75,13 @@ async def cancel_time_day_change(query: types.CallbackQuery) -> None:
 @router.callback_query(CreateTaskStates.cancel_time_day, F.data, CheckIntText())
 async def cancel_time_day(query: types.CallbackQuery, state: FSMContext, number: int | None = None) -> None:
     state_name: str = await state.get_state()
+    user_tz: int = (await state.get_data()).get('user_tz', 3)
+    user_tz: timezone = timezone(timedelta(days=user_tz))
     if state_name == CreateTaskStates.cancel_time_day:
         await state.set_state(CreateTaskStates.cancel_time_month)
     else:
         await state.set_state(RedactingTaskStates.redact_date_month)
-    this_datetime = datetime.now()
+    this_datetime = datetime.now(tz=user_tz)
     this_month: str = month_list[this_datetime.month - 1]
     keyboard: types.InlineKeyboardMarkup = await make_kb_change_unit()
     day: int = number or this_datetime.day
@@ -99,7 +104,9 @@ async def cancel_time_month_change(query: types.CallbackQuery) -> None:
 @router.callback_query(CreateTaskStates.cancel_time_month, F.data, CheckIntText())
 async def cancel_time_month(query: types.CallbackQuery, state: FSMContext, number: int | None = None) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_change_unit()
-    this_datetime = datetime.now()
+    user_tz: int = (await state.get_data()).get('user_tz', 3)
+    user_tz: timezone = timezone(timedelta(days=user_tz))
+    this_datetime = datetime.now(tz=user_tz)
     month: int = number or this_datetime.month
     state_name: str = await state.get_state()
     await state.update_data(month=month)
@@ -125,7 +132,9 @@ async def cancel_time_year_change(query: types.CallbackQuery) -> None:
 @router.callback_query(CreateTaskStates.cancel_time_year, F.data, CheckIntText())
 async def cancel_time_year(query: types.CallbackQuery, state: FSMContext, number: int | None = None) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_change_unit()
-    this_datetime = datetime.now()
+    user_tz: int = (await state.get_data()).get('user_tz', 3)
+    user_tz: timezone = timezone(timedelta(days=user_tz))
+    this_datetime = datetime.now(tz=user_tz)
     year: int = number or this_datetime.year
     await state.update_data(year=year)
     state_name = await state.get_state()
@@ -151,7 +160,9 @@ async def cancel_time_hour_change(query: types.CallbackQuery) -> None:
 @router.callback_query(CreateTaskStates.cancel_time_hour, F.data, CheckIntText())
 async def cancel_time_hour(query: types.CallbackQuery, state: FSMContext, number: int | None = None) -> None:
     keyboard: types.InlineKeyboardMarkup = await make_kb_change_unit()
-    this_datetime = datetime.now()
+    user_tz: int = (await state.get_data()).get('user_tz', 3)
+    user_tz: timezone = timezone(timedelta(days=user_tz))
+    this_datetime = datetime.now(tz=user_tz)
     hour: int = number or this_datetime.hour
     await state.update_data(hour=hour)
     state_name = await state.get_state()
@@ -177,9 +188,10 @@ async def cancel_time_minute_change(query: types.CallbackQuery) -> None:
 @router.callback_query(CreateTaskStates.cancel_time_minute, F.data, CheckIntText())
 async def cancel_time_minute(query: types.CallbackQuery, state: FSMContext, number: int | None = None) -> None:
     keyboard = await make_kb_result()
-    this_datetime = datetime.now()
-    minute: int = number or this_datetime.minute
     data: dict = await state.get_data()
+    user_tz: timezone = timezone(timedelta(days=data.get('user_tz', 3)))
+    this_datetime = datetime.now(tz=user_tz)
+    minute: int = number or this_datetime.minute
     day = correct_day(day=data['day'], month=data['month'], year=data['year'])
     cancel_time = datetime(day=day, month=data['month'], year=data['year'], hour=data['hour'], minute=minute)
     await state.update_data(cancel_time=cancel_time)

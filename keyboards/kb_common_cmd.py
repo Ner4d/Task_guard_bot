@@ -2,8 +2,7 @@ from gettext import gettext as _
 
 
 from aiogram import types
-
-from static import red_cross_emoji, yellow_ticket_emoji
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 async def kb_inline_main_menu() -> types.InlineKeyboardMarkup:
@@ -11,6 +10,7 @@ async def kb_inline_main_menu() -> types.InlineKeyboardMarkup:
         [types.InlineKeyboardButton(text=_('Новая задача'), callback_data='create_task')],
         [types.InlineKeyboardButton(text=_('Мои задачи'), callback_data='manage_task')],
         [types.InlineKeyboardButton(text=_('Справка'), callback_data='help')],
+        [types.InlineKeyboardButton(text=_('Изменить часовой пояс'), callback_data='change_timezone')],
     ]
     keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
@@ -48,3 +48,22 @@ async def kb_inline_button_skip() -> types.InlineKeyboardMarkup:
     return keyboard
 
 
+async def kb_inline_timezone_russia() -> types.InlineKeyboardMarkup:
+    city_timezone = {
+        'Калининград UTC+2': '2',
+        'Москва UTC+3': '3',
+        'Самара UTC+4': '4',
+        'Пермь UTC+5': '5',
+        'Омск UTC+6': '6',
+        'Алтай UTC+7': '7',
+        'Иркутск UTC+8': '8',
+        'Забайкальский край UTC+9': '9',
+        'Приморский край UTC+10': '10',
+        'Магадан UTC+11': '11',
+        'Камчатка UTC+12': '12',
+    }
+    kb_builder = InlineKeyboardBuilder()
+    for city, timezone in city_timezone.items():
+        kb_builder.add(types.InlineKeyboardButton(text=_(city), callback_data=timezone))
+    kb_builder.adjust(2)
+    return kb_builder.as_markup()

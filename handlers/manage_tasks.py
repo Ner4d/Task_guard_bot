@@ -53,7 +53,7 @@ async def prepare_text_task(task: TaskModel | int) -> str:
 @router.callback_query(F.data == 'manage_task')
 async def cmd_manage_tasks(query: types.CallbackQuery, state: FSMContext) -> None:
     user_id: int = query.from_user.id
-    tasks_list: list[TaskModel] = get_tasks(user_id=user_id)
+    tasks_list: list[TaskModel] = await get_tasks(user_id=user_id)
     if not tasks_list:
         keyboard = await kb_inline_back_in_menu()
         await query.message.edit_text(text=_('Какие-либо задачи отсутствуют'), reply_markup=keyboard)
@@ -92,7 +92,7 @@ async def button_next_page(query: types.CallbackQuery, state: FSMContext) -> Non
     await state.update_data(start_index=start_index)
     end_index = start_index + 4
     user_id: int = query.from_user.id
-    tasks_list: list[TaskModel] = get_tasks(user_id=user_id)
+    tasks_list: list[TaskModel] = await get_tasks(user_id=user_id)
     current_page = tasks_list[start_index:end_index]
     for index, task in enumerate(current_page):
         if task.status == task.STATUSES.in_process:
@@ -110,14 +110,14 @@ async def button_next_page(query: types.CallbackQuery, state: FSMContext) -> Non
 @router.callback_query(F.data.startswith('delete'))
 async def query_delete_task(callback: types.CallbackQuery) -> None:
     task_id: int = await take_task_id_from_task(callback=callback)
-    delete_task(task_id=task_id)
+    await delete_task(task_id=task_id)
     await callback.message.edit_text(text=_('Задача удалена'))
 
 
 @router.callback_query(F.data.startswith('done'))
 async def query_done_task(callback: types.CallbackQuery) -> None:
     task_id: int = await take_task_id_from_task(callback=callback)
-    completed_task(task_id=task_id)
+    await completed_task(task_id=task_id)
 
     text: str = await prepare_text_task(task=task_id)
     kb = await make_kb(task_id=task_id, status=TaskModel.STATUSES.completed)
@@ -128,7 +128,7 @@ async def query_done_task(callback: types.CallbackQuery) -> None:
 @router.callback_query(F.data.startswith('inProcess'))
 async def query_in_process_task(callback: types.CallbackQuery) -> None:
     task_id: int = await take_task_id_from_task(callback=callback)
-    in_process_task(task_id=task_id)
+    await in_process_task(task_id=task_id)
 
     kb = await make_kb(task_id=task_id, status=TaskModel.STATUSES.in_process)
     text: str = await prepare_text_task(task=task_id)
@@ -139,7 +139,7 @@ async def query_in_process_task(callback: types.CallbackQuery) -> None:
 @router.callback_query(F.data.startswith('failed'))
 async def query_failed_task(callback: types.CallbackQuery) -> None:
     task_id: int = await take_task_id_from_task(callback=callback)
-    failed_task(task_id=task_id)
+    await failed_task(task_id=task_id)
 
     text: str = await prepare_text_task(task=task_id)
     kb = await make_kb(task_id=task_id, status=TaskModel.STATUSES.failed)

@@ -3,9 +3,8 @@ from gettext import gettext as _
 from aiogram import Router, F, types, filters
 from aiogram.fsm.context import FSMContext
 
-from handlers.states import CreateTaskStates, RedactingTaskStates
-from keyboards.kb_common_cmd import kb_inline_main_menu, kb_inline_back_in_menu
-
+from handlers.states import CreateTaskStates, RedactingTaskStates, ChangePersonalConfig
+from keyboards.kb_common_cmd import kb_inline_main_menu, kb_inline_back_in_menu, kb_inline_timezone_russia
 
 router = Router()
 
@@ -51,3 +50,11 @@ async def cmd_cancel(query_message: types.CallbackQuery | types.Message, state: 
         await query_message.answer(text=text, reply_markup=keyboard)
     else:  # isinstance(query_message, types.CallbackQuery)
         await query_message.message.edit_text(text=text, reply_markup=keyboard)
+
+
+@router.callback_query(F.data == 'change_timezone')
+async def cmd_change_timezone(query: types.CallbackQuery, state: FSMContext) -> None:
+    keyboard = await kb_inline_timezone_russia()
+    await state.set_state(ChangePersonalConfig.change_timezone)
+    text = _('Выберите доступный часовой пояс\nЕсли в списке нет вашего отправьте число (+3, -3 и т.д.)')
+    await query.message.edit_text(text=text, reply_markup=keyboard)

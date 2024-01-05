@@ -7,6 +7,7 @@ from handlers.states import CreateTaskStates, RedactingTaskStates
 from keyboards.kb_cancel_time import make_kb_change_default
 from keyboards.kb_common_cmd import kb_inline_button_cancel, kb_inline_button_skip
 from static import I_TEXT
+from storage.manage_storage import get_user_tz
 
 router = Router()
 
@@ -16,7 +17,9 @@ router = Router()
 async def create_task_title_ok(message: types.Message, state: FSMContext) -> None:
     keyboard = await kb_inline_button_skip()
     title: str = message.text
-    await state.update_data(title=title)
+    user_id: int = message.from_user.id
+    user_tz: int = await get_user_tz(user_id=user_id)
+    await state.update_data(title=title, user_tz=user_tz)
     await state.set_state(state=CreateTaskStates.create_description)
     await message.answer(
         text=_('Я запомнил название задачи: {}').format(title) + _('\nТеперь напишите описание (до 128-ти символов)'),

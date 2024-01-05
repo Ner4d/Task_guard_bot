@@ -19,11 +19,5 @@ DATA_BASE = SqliteDatabase('DataBaseSQLite.db')
 
 # Локализация
 
-LOCALES_DIR = path.join(BASE_DIR, 'locales')
-
-lang = 'en'
-
-gettext.bindtextdomain(domain=lang, localedir=LOCALES_DIR)
-gettext.textdomain(lang)
-lang_pack = gettext.translation(domain=lang, localedir=LOCALES_DIR)
+LOCALES_DIR = path.join(BASE_DIR, 'locale')
 

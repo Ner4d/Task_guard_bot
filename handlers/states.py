@@ -22,3 +22,7 @@ class RedactingTaskStates(StatesGroup):
     redact_time_minute = State()
     redact_result = State()
 
+
+class ChangePersonalConfig(StatesGroup):
+    change_timezone = State()
+

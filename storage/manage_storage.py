@@ -1,10 +1,25 @@
-from datetime import datetime
+from gettext import gettext as _
+
+import asyncio
+
+from aiogram import Bot
+from datetime import datetime, timedelta, timezone
 from random import randint
 
 from storage.models import UserModel, TaskModel
 
 
-task
+async def check_burn_task(_bot: Bot):
+    while True:
+        query_task = (TaskModel.select(TaskModel, UserModel).join(UserModel))
+        for task in query_task:
+            now_user_time = datetime.now() + timedelta(hours=task.owner.time_zone)
+            if now_user_time < task.cancel_task and task.status == TaskModel.STATUSES.in_process:
+                lost_time_minute = (task.cancel_task - now_user_time).seconds // 60
+                if lost_time_minute <= 5:
+                    text = _('Уважаемый пользовать, у вас сроки горят, задача {}').format(task.title)
+                    await _bot.send_message(chat_id=task.owner.user_id, text=text)
+        await asyncio.sleep(300)
 
 
 async def change_tz_user(user_id: int, new_tz: int) -> None:
@@ -85,8 +100,10 @@ async def failed_task(task_id: int) -> None:
     return
 
 
-async def check_task_time(task: TaskModel) -> None:
-    if task.cancel_task <= datetime.now():
+async def check_task_time(task: TaskModel, user_id: int) -> None:
+    user: UserModel = UserModel.get(UserModel.user_id == user_id)
+    now_time = datetime.now() + timedelta(hours=user.time_zone)
+    if task.cancel_task <= now_time:
         task.status = TaskModel.STATUSES.overtime
         task.save()
     return

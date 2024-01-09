@@ -16,7 +16,7 @@ class BaseModel(Model):
 class UserModel(BaseModel):
     user_id = IntegerField(unique=True)
     language = CharField(default='ru')
-    time_zone = IntegerField(default=3)
+    time_zone = IntegerField(default=0)
 
 
 # Сама модель задач с необходимыми данными

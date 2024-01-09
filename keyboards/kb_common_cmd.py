@@ -50,17 +50,17 @@ async def kb_inline_button_skip() -> types.InlineKeyboardMarkup:
 
 async def kb_inline_timezone_russia() -> types.InlineKeyboardMarkup:
     city_timezone = {
-        'Калининград UTC+2': '2',
-        'Москва UTC+3': '3',
-        'Самара UTC+4': '4',
-        'Пермь UTC+5': '5',
-        'Омск UTC+6': '6',
-        'Алтай UTC+7': '7',
-        'Иркутск UTC+8': '8',
-        'Забайкальский край UTC+9': '9',
-        'Приморский край UTC+10': '10',
-        'Магадан UTC+11': '11',
-        'Камчатка UTC+12': '12',
+        'Калининград UTC+2': '-1',
+        'Москва UTC+3': '0',
+        'Самара UTC+4': '1',
+        'Пермь UTC+5': '2',
+        'Омск UTC+6': '3',
+        'Алтай UTC+7': '4',
+        'Иркутск UTC+8': '5',
+        'Забайкальский край UTC+9': '6',
+        'Приморский край UTC+10': '7',
+        'Магадан UTC+11': '8',
+        'Камчатка UTC+12': '9',
     }
     kb_builder = InlineKeyboardBuilder()
     for city, timezone in city_timezone.items():

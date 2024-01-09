@@ -59,17 +59,15 @@ async def cmd_manage_tasks(query: types.CallbackQuery, state: FSMContext) -> Non
         await query.message.edit_text(text=_('Какие-либо задачи отсутствуют'), reply_markup=keyboard)
         return
     start_index = 0
-    await state.update_data(start_index=start_index)
     end_index: int = 4
     max_num_page: int = ceil(len(tasks_list) / 4)
-    await state.update_data(num_page=1)
-    await state.update_data(max_num_page=max_num_page)
+    await state.update_data(num_page=1, max_num_page=max_num_page, start_index=start_index)
     await query.message.delete()
 
     for index, task in enumerate(tasks_list[:end_index]):
 
         if task.status == task.STATUSES.in_process:
-            await check_task_time(task=task)
+            await check_task_time(task=task, user_id=query.from_user.id)
 
         kb: types.InlineKeyboardMarkup = await make_kb(task_id=task.task_id, status=task.status)
         text: str = await prepare_text_task(task=task)

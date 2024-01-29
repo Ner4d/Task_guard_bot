@@ -17,6 +17,7 @@ python3 -m venv venv
 pip install requirements.txt
 ```
 Для работы бота необходим Токен. Получить его можно в телеграмме, у <a href="https://t.me/BotFather'a">BotFather</a> (Необходимо зарегестрировать нового бота)
+
 Далее нам необходим env файл
 ```
 touch .env

@@ -14,7 +14,7 @@
 git clone https://github.com/Ner4d/Task_guard_bot.git
 cd Task_guard_bot
 python3 -m venv venv
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 Для работы бота необходим Токен. Получить его можно в телеграмме, у <a href="https://t.me/BotFather'a">BotFather</a> (Необходимо зарегестрировать нового бота)
 

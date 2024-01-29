@@ -32,6 +32,6 @@ BOT_TOKEN=1234567890:qwerty-foobar
 <b>Запуск</b>  
 (Следующие команды предпологают запуск в папке с main.py файлом)
 ```
-source venv/bin/activate
+source venv/bin/activate #  Если вы НЕ активировали среду ранее
 python3 ./main.py
 ```

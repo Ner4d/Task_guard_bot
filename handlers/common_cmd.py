@@ -1,10 +1,13 @@
 from gettext import gettext as _
 
-from aiogram import Router, F, types, filters
+from aiogram import F, Router, filters, types
 from aiogram.fsm.context import FSMContext
 
-from handlers.states import CreateTaskStates, RedactingTaskStates, ChangePersonalConfig
-from keyboards.kb_common_cmd import kb_inline_main_menu, kb_inline_back_in_menu, kb_inline_timezone_russia
+from handlers.states import (ChangePersonalConfig, CreateTaskStates,
+                             RedactingTaskStates)
+from keyboards.kb_common_cmd import (kb_inline_back_in_menu,
+                                     kb_inline_main_menu,
+                                     kb_inline_timezone_russia)
 
 router = Router()
 
@@ -26,8 +29,8 @@ async def button_back(query: types.CallbackQuery, state: FSMContext) -> None:
 @router.callback_query(F.data == 'help')
 async def main_button_help(query: types.CallbackQuery) -> None:
     keyboard = await kb_inline_back_in_menu()
-    await query.message.edit_text(text=_('Вы можете использовать команду /cancel, чтобы сбросить всё и вернуться в главное меню'),
-                                  reply_markup=keyboard)
+    text = _('Вы можете использовать команду /cancel, чтобы сбросить всё и вернуться в главное меню')
+    await query.message.edit_text(text=text, reply_markup=keyboard)
 
 
 @router.callback_query(F.data == 'create_task')

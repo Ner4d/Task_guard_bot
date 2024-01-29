@@ -1,5 +1,5 @@
-from datetime import datetime
 import re
+from datetime import datetime
 
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
@@ -13,7 +13,7 @@ class HasDateTimeFilter(BaseFilter):
         find: re.Match | None = re.search(pattern=pattern, string=text)
         if find:
             date_string: str = find.group()
-            return datetime.strptime(date_string,'%d.%m.%Y %H:%M')
+            return datetime.strptime(date_string, '%d.%m.%Y %H:%M')
         return False
 
     async def __call__(self, message: Message) -> bool | dict:

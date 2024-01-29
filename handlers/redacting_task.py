@@ -1,13 +1,12 @@
-from gettext import gettext as _
 from datetime import datetime
+from gettext import gettext as _
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
-from static import B_TEXT, I_TEXT
-from keyboards.kb_cancel_time import month_list, make_kb_result
 from handlers.states import RedactingTaskStates
-
+from keyboards.kb_cancel_time import make_kb_result, month_list
+from static import B_TEXT, I_TEXT
 
 router = Router()
 
@@ -32,7 +31,8 @@ async def redact_title_ok(message: types.Message, state: FSMContext) -> None:
     else:
         await state.update_data(description=message.text)
     data: dict = await state.get_data()
-    text = await prepare_text_to_result(title=data['title'], description=data['description'], cancel_time=data['cancel_time'])
+    text = await prepare_text_to_result(title=data['title'], description=data['description'],
+                                        cancel_time=data['cancel_time'])
     await message.answer(text=text, reply_markup=keyboard, parse_mode='HTML')
 
 

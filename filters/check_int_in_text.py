@@ -10,4 +10,3 @@ class CheckIntText(BaseFilter):
         except ValueError:
             return False
         return {'number': number}
-

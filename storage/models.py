@@ -1,8 +1,10 @@
-from peewee import Model, IntegerField, CharField, ForeignKeyField, TextField, DateTimeField
+from collections import namedtuple
+from datetime import datetime
+
+from peewee import (CharField, DateTimeField, ForeignKeyField, IntegerField,
+                    Model, TextField)
 
 from settings import DATA_BASE
-from datetime import datetime
-from collections import namedtuple
 
 
 # Базовая модель с настроенным подключением к конкретной базе данных для последующих моделей

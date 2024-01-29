@@ -2,15 +2,15 @@ import asyncio
 import logging
 from pathlib import Path
 
-from aiogram import Dispatcher, Bot
+from aiogram import Bot, Dispatcher
 from aiogram.types import bot_command as bc
 from aiogram.utils.i18n import I18n
 
+from handlers import (change_tz, common_cmd, create_cancel_time, create_task,
+                      manage_tasks, redacting_task)
 from settings import BOT_TOKEN
-from storage.models import create_db_tables, UserModel
 from storage.manage_storage import check_burn_task
-from handlers import common_cmd, create_task, manage_tasks, create_cancel_time, redacting_task, change_tz
-
+from storage.models import create_db_tables
 
 # language
 BASE_DIR = "/home/oleg/TelegramProjects/Task_guard_bot"
@@ -37,8 +37,9 @@ dp.include_routers(common_cmd.router, manage_tasks.router, create_task.router, c
 
 
 async def main():
-    await bot.set_my_commands(commands=[bc.BotCommand(command='/cancel',
-                                                      description='Оптимальный способ завершить задачи и вызвать меню')])
+    await bot.set_my_commands(commands=[bc.BotCommand(
+        command='/cancel', description='Оптимальный способ завершить задачи и вызвать меню'
+    )])
     await bot.delete_webhook(drop_pending_updates=True)
     task_check_burn_task = asyncio.create_task(check_burn_task(bot))
     await dp.start_polling(bot)

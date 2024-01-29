@@ -25,4 +25,3 @@ class RedactingTaskStates(StatesGroup):
 
 class ChangePersonalConfig(StatesGroup):
     change_timezone = State()
-

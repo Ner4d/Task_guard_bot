@@ -1,9 +1,8 @@
 from datetime import datetime
+from gettext import gettext as _
 
 from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-
-from gettext import gettext as _
 
 month_list = [
     _('Январь'),

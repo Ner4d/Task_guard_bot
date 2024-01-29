@@ -1,6 +1,5 @@
 from gettext import gettext as _
 
-
 from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -16,14 +15,16 @@ async def make_kb(task_id: int, status: str) -> types.InlineKeyboardMarkup:
     buttons_row: list = [types.InlineKeyboardButton(text=text_button_delete, callback_data=f'delete_{task_id}')]
 
     if status == TaskModel.STATUSES.completed:
-        buttons_row.append(types.InlineKeyboardButton(text=text_button_in_process, callback_data=f'inProcess_{task_id}'))
+        buttons_row.append(types.InlineKeyboardButton(text=text_button_in_process,
+                                                      callback_data=f'inProcess_{task_id}'))
         buttons_row.append(types.InlineKeyboardButton(text=text_button_failed, callback_data=f'failed_{task_id}'))
     elif status in (TaskModel.STATUSES.in_process, TaskModel.STATUSES.overtime):
         buttons_row.append(types.InlineKeyboardButton(text=text_button_done, callback_data=f'done_{task_id}'))
         buttons_row.append(types.InlineKeyboardButton(text=text_button_failed, callback_data=f'failed_{task_id}'))
     else:  # Я предполагаю что в оставшихся варианта задача будет в статусе "Не завершена"
         buttons_row.append(types.InlineKeyboardButton(text=text_button_done, callback_data=f'done_{task_id}'))
-        buttons_row.append(types.InlineKeyboardButton(text=text_button_in_process, callback_data=f'inProcess_{task_id}'))
+        buttons_row.append(types.InlineKeyboardButton(text=text_button_in_process,
+                                                      callback_data=f'inProcess_{task_id}'))
 
     buttons_column: list[list[types.InlineKeyboardButton]] = [buttons_row]
 

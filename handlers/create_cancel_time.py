@@ -1,18 +1,19 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from gettext import gettext as _
 
-
-from aiogram import Router, F, types
+from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
+from filters import CheckIntText, correct_day
+from handlers.redacting_task import prepare_text_to_result
 from handlers.states import CreateTaskStates, RedactingTaskStates
-from keyboards.kb_cancel_time import (make_kb_change_unit, month_list, make_kb_month, make_kb_year, make_kb_days,
-                                      make_kb_hour, make_kb_minute, make_kb_result)
+from keyboards.kb_cancel_time import (make_kb_change_unit, make_kb_days,
+                                      make_kb_hour, make_kb_minute,
+                                      make_kb_month, make_kb_result,
+                                      make_kb_year, month_list)
 from keyboards.kb_common_cmd import kb_inline_main_menu
 from static.font_styles import B_TEXT
-from filters import CheckIntText, correct_day
 from storage.manage_storage import add_task
-from handlers.redacting_task import prepare_text_to_result
 
 router = Router()
 
@@ -22,7 +23,8 @@ async def save_result_task(query: types.CallbackQuery, state: FSMContext) -> Non
     keyboard = await kb_inline_main_menu()
     data: dict = await state.get_data()
     user_id: int = query.from_user.id
-    await add_task(user_id=user_id, title=data['title'], cancel_task=data['cancel_time'], description=data['description'])
+    await add_task(user_id=user_id, title=data['title'], cancel_task=data['cancel_time'],
+                   description=data['description'])
     await state.clear()
     await query.message.edit_text(text=_('Задача готова!'), reply_markup=keyboard)
 

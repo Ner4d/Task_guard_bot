@@ -1,6 +1,5 @@
 from gettext import gettext as _
 
-
 from aiogram import types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 

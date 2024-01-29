@@ -1,12 +1,11 @@
-from gettext import gettext as _
-
 import asyncio
-
-from aiogram import Bot
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
+from gettext import gettext as _
 from random import randint
 
-from storage.models import UserModel, TaskModel
+from aiogram import Bot
+
+from storage.models import TaskModel, UserModel
 
 
 async def check_burn_task(_bot: Bot):

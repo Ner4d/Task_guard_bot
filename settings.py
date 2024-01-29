@@ -1,8 +1,7 @@
-import gettext
-import environ
 from os import getcwd, path
-from peewee import SqliteDatabase
 
+import environ
+from peewee import SqliteDatabase
 
 env = environ.Env()
 
@@ -20,4 +19,3 @@ DATA_BASE = SqliteDatabase('DataBaseSQLite.db')
 # Локализация
 
 LOCALES_DIR = path.join(BASE_DIR, 'locale')
-

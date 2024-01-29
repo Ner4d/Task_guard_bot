@@ -1,11 +1,12 @@
 from gettext import gettext as _
 
-from aiogram import Router, F, types
+from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
 from handlers.states import CreateTaskStates, RedactingTaskStates
 from keyboards.kb_cancel_time import make_kb_change_default
-from keyboards.kb_common_cmd import kb_inline_button_cancel, kb_inline_button_skip
+from keyboards.kb_common_cmd import (kb_inline_button_cancel,
+                                     kb_inline_button_skip)
 from static import I_TEXT
 from storage.manage_storage import get_user_tz
 

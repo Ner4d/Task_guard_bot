@@ -1,15 +1,17 @@
-from math import ceil
 from gettext import gettext as _
+from math import ceil
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
-from storage.manage_storage import get_tasks, delete_task, completed_task, in_process_task, check_task_time, failed_task
-from storage.models import TaskModel
-from keyboards.kb_manage_task import make_kb, make_kb_end
-from keyboards.kb_common_cmd import kb_inline_back_in_menu
-from keyboards.kb_cancel_time import month_list
 import static
+from keyboards.kb_cancel_time import month_list
+from keyboards.kb_common_cmd import kb_inline_back_in_menu
+from keyboards.kb_manage_task import make_kb, make_kb_end
+from storage.manage_storage import (check_task_time, completed_task,
+                                    delete_task, failed_task, get_tasks,
+                                    in_process_task)
+from storage.models import TaskModel
 
 router = Router()
 

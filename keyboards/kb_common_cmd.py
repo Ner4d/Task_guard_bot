@@ -49,6 +49,7 @@ async def kb_inline_button_skip() -> types.InlineKeyboardMarkup:
 
 
 async def kb_inline_timezone_russia() -> types.InlineKeyboardMarkup:
+    #  Значения ключей расчитаны на Московское время
     city_timezone = {
         'Калининград UTC+2': '-1',
         'Москва UTC+3': '0',
